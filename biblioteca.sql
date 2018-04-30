@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-04-2018 a las 02:55:17
+-- Tiempo de generación: 30-04-2018 a las 22:16:54
 -- Versión del servidor: 5.7.14
 -- Versión de PHP: 5.6.25
 
@@ -652,7 +652,7 @@ CREATE TABLE `usuario` (
   `Nombre` varchar(25) NOT NULL,
   `Apellido` varchar(25) NOT NULL,
   `Carnet` varchar(8) NOT NULL,
-  `Password` varchar(25) NOT NULL,
+  `Password` varchar(64) NOT NULL,
   `Mora` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -661,11 +661,11 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idUsuario`, `idCategoria`, `Nombre`, `Apellido`, `Carnet`, `Password`, `Mora`) VALUES
-(1, 1, 'Juan', 'Perez', 'JP000001', 'admin', 0),
-(2, 2, 'Milton', 'Narvaez', 'MN000002', 'udb', 0),
-(3, 3, 'Marcela Maria', 'Lopez', 'LV140071', '123', 0.65),
-(4, 3, 'Alejandra', 'Martinez', 'MC140070', '2018', 0),
-(5, 3, 'Susana Beatriz', 'Quintanilla Rubio', 'QR140319', 'biblio', 0.45);
+(1, 1, 'Juan', 'Perez', 'JP000001', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 0),
+(2, 2, 'Milton', 'Narvaez', 'MN000002', '3261c7c02e459177b631d6d9ceb42e5df8426f7d356b9174db653d1be0d19166', 0),
+(3, 3, 'Marcela Maria', 'Lopez', 'LV140071', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 0.65),
+(4, 3, 'Alejandra', 'Martinez', 'MC140070', '152e69cf3c8e76c8d8b0aed924ddd1708e4c68624611af33d52c2c2814dd5df9', 0),
+(5, 3, 'Susana Beatriz', 'Quintanilla Rubio', 'QR140319', '1ae85ad204dcc4529eefabe2a7ed40b1df817c0a86b890d6ba991cd51e2cfa1f', 0.45);
 
 --
 -- Índices para tablas volcadas
