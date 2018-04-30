@@ -62,8 +62,19 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("UsuarioActual", UsuarioActual);
                 ServletContext sc = getServletContext();
-                RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/index.html");
-                requestDispatcher.forward(request, response);
+                if(UsuarioActual.getIdCategoria() == 1){
+                    //Redirigir a home Administrador
+                    RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/homeAdmin.jsp");
+                    requestDispatcher.forward(request, response);
+                }
+                else if(UsuarioActual.getIdCategoria() == 2){
+                    RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/index.html");
+                    requestDispatcher.forward(request, response);
+                }
+                else if(UsuarioActual.getIdCategoria() == 3){
+                    RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/index.html");
+                    requestDispatcher.forward(request, response);
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
