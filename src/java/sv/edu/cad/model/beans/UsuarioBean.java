@@ -16,6 +16,15 @@ public class UsuarioBean {
     private String nombre;
     private String apellido;
     private float mora;
+    private int idUsuario;
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
 
     public String getCarnet() {
         return carnet;

@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,10 +39,18 @@
         <div class="card-header"><center><strong>.:: Amigos de Don Bosco - Login ::.</strong></center></div>
         
       <div class="card-body">
-          <form method="POST" action="login">
+          
             <div class="form-group">
                 <center><img src="img/DonBosco.png" width="150" height="200"></center>
             </div>
+            <c:if test="${not empty Error}">
+                <div class="form-group">
+                    <div class="alert alert-danger">
+                        <strong>ERROR! </strong><fmt:message key="label.errorLogin"/>
+                    </div>
+                </div>
+            </c:if>        
+          <form method="POST" action="login" onsubmit="return validacion()">
           <div class="form-group">
             <label for="usuario"><fmt:message key="label.usuario"/></label>
             <input class="form-control" name="usuario" id="usuario" type="text" aria-describedby="emailHelp" placeholder="<fmt:message key="label.phusuario"/>" required>
@@ -50,7 +59,7 @@
             <label for="paswword"><fmt:message key="label.clave"/></label>
             <input class="form-control" name="password" id="password" type="password" placeholder="<fmt:message key="label.phclave"/>" required="required">
           </div>
-            <a class="btn btn-primary btn-block" href="index.html" onclick="return validacion()"><fmt:message key="label.login"/></a>
+          <input class="btn btn-primary btn-block" type="submit" value="<fmt:message key="label.login"/>"></input>
         </form>
         <div class="text-center">
             <br>
