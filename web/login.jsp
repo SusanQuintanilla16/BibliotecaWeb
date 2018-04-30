@@ -1,8 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,13 +32,13 @@
   </script>
 </head>
 
-<body class="bg-dark">
+<body class="bg-dark" >
   <div class="container">
     <div class="card card-login mx-auto mt-5">
         <div class="card-header"><center><strong>.:: Amigos de Don Bosco - Login ::.</strong></center></div>
         
       <div class="card-body">
-          <form method="POST">
+          <form method="POST" action="login">
             <div class="form-group">
                 <center><img src="img/DonBosco.png" width="150" height="200"></center>
             </div>
