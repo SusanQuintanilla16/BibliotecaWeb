@@ -355,7 +355,7 @@
     <footer class="sticky-footer">
       <div class="container">
         <div class="text-center">
-            <small>Copyright © Biblioteca Amigos de Don Bosco </small>
+            <small>Copyright © Biblioteca Amigos de Don Bosco 2018</small>
         </div>
       </div>
     </footer>
