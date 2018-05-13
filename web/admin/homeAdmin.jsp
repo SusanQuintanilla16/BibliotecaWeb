@@ -39,7 +39,7 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Principal">
-          <a class="nav-link" href="homeAdmin.html">
+          <a class="nav-link" href="homeAdmin.jsp">
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text"><fmt:message key="label.main"/></span>
           </a>
