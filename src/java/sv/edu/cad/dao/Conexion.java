@@ -11,6 +11,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sv.edu.cad.model.beans.DatosBean;
 import sv.edu.cad.model.beans.UsuarioBean;
 
 /**
@@ -35,6 +38,7 @@ public class Conexion {
      }
     }
     
+    //Función para verificar la existencia del usuario en el sistema
     public boolean verificarUsuario(UsuarioBean Usuario){
         try{
             PreparedStatement query;
@@ -57,6 +61,39 @@ public class Conexion {
         catch(SQLException ex){
             ex.printStackTrace();
             return false;
+        }
+    }
+    
+    //Función para obtener datos para el home de administrador
+    public DatosBean cargaInfoHomeA(){
+        DatosBean Datos = new DatosBean();
+        try {
+            String query="SELECT count(usuario.idUsuario) from usuario";
+            ResultSet resultado = s.executeQuery(query);
+            if(resultado.next()){
+                Datos.setCantidadUsuarios(resultado.getInt(1));
+            }
+            query="SELECT count(ejemplar.idEjemplar) from ejemplar";
+            resultado = s.executeQuery(query);
+            if(resultado.next()){
+                Datos.setCantidadTotalItems(resultado.getInt(1));
+            }
+            query="SELECT count(ejemplar.idEjemplar) from ejemplar where ejemplar.idEstado=1";
+            resultado = s.executeQuery(query);
+            if(resultado.next()){
+                Datos.setCantidadDisponibleItems(resultado.getInt(1));
+            }
+            query="SELECT count(ejemplar.idEjemplar) from ejemplar where ejemplar.idEstado=2";
+            resultado = s.executeQuery(query);
+            if(resultado.next()){
+                Datos.setCantidadPrestadoItems(resultado.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally{
+            return Datos;
         }
     }
     

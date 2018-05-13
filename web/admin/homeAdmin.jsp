@@ -3,10 +3,13 @@
     Created on : 30-abr-2018, 17:38:55
     Author     : Susan
 --%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" import="java.util.*,java.text.*"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
-<% if(session.getAttribute("UsuarioActual")== null){
+<% 
+    DateFormat df = new SimpleDateFormat("dd/MM/yy");
+    String formattedDate = df.format(new Date());
+    if(session.getAttribute("UsuarioActual")== null){
     response.sendRedirect("../login.jsp");
    }else{
 %>
@@ -127,14 +130,13 @@
           <div class="card text-white bg-primary o-hidden h-100">
             <div class="card-body">
               <div class="card-body-icon">
-                <i class="fa fa-fw fa-comments"></i>
+                <i class="fa fa-fw fa-users"></i>
               </div>
-              <div class="mr-5">26 New Messages!</div>
+              <div class="mr-5">${Datos.cantidadUsuarios} Usuarios Registrados</div>
             </div>
             <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left">View Details</span>
+              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
               <span class="float-right">
-                <i class="fa fa-angle-right"></i>
               </span>
             </a>
           </div>
@@ -145,12 +147,11 @@
               <div class="card-body-icon">
                 <i class="fa fa-fw fa-list"></i>
               </div>
-              <div class="mr-5">11 New Tasks!</div>
+              <div class="mr-5">${Datos.cantidadUsuarios} Items Registados</div>
             </div>
             <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left">View Details</span>
+              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
               <span class="float-right">
-                <i class="fa fa-angle-right"></i>
               </span>
             </a>
           </div>
@@ -159,12 +160,12 @@
           <div class="card text-white bg-success o-hidden h-100">
             <div class="card-body">
               <div class="card-body-icon">
-                <i class="fa fa-fw fa-address-book"></i>
+                <i class="fa fa-fw fa-check"></i>
               </div>
-              <div class="mr-5">123 New Orders!</div>
+              <div class="mr-5">${Datos.cantidadDisponibleItems} Items Disponibles</div>
             </div>
             <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left">View Details</span>
+                <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
               <span class="float-right">
               </span>
             </a>
@@ -174,14 +175,13 @@
           <div class="card text-white bg-danger o-hidden h-100">
             <div class="card-body">
               <div class="card-body-icon">
-                <i class="fa fa-fw fa-support"></i>
+                <i class="fa fa-fw fa-exclamation-triangle"></i>
               </div>
-              <div class="mr-5">13 New Tickets!</div>
+              <div class="mr-5">${Datos.cantidadPrestadoItems} Items Prestados</div>
             </div>
             <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left">View Details</span>
+              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
               <span class="float-right">
-                <i class="fa fa-angle-right"></i>
               </span>
             </a>
           </div>

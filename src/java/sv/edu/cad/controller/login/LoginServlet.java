@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import sv.edu.cad.dao.Conexion;
+import sv.edu.cad.model.beans.DatosBean;
 import sv.edu.cad.model.beans.UsuarioBean;
 
 /**
@@ -64,6 +65,8 @@ public class LoginServlet extends HttpServlet {
                 ServletContext sc = getServletContext();
                 if(UsuarioActual.getIdCategoria() == 1){
                     //Redirigir a home Administrador
+                    DatosBean Datos = conexion.cargaInfoHomeA();
+                    session.setAttribute("Datos", Datos);
                     RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/homeAdmin.jsp");
                     requestDispatcher.forward(request, response);
                 }
