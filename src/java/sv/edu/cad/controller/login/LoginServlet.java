@@ -71,7 +71,7 @@ public class LoginServlet extends HttpServlet {
                     requestDispatcher.forward(request, response);
                 }
                 else if(UsuarioActual.getIdCategoria() == 2){
-                    RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/index.html");
+                    RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/docente/homedocente.jsp");
                     requestDispatcher.forward(request, response);
                 }
                 else if(UsuarioActual.getIdCategoria() == 3){
