@@ -1,8 +1,9 @@
 <%-- 
-    Document   : homeAdmin
-    Created on : 30-abr-2018, 17:38:55
+    Document   : ingPrestamo
+    Created on : 13-may-2018, 21:30:13
     Author     : Susan
 --%>
+
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" import="java.util.*,java.text.*"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
@@ -22,13 +23,6 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <title>.:: Amigos de Don Bosco - <fmt:message key="label.titleAdmin"/> ::.</title>
-   <link href=".../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom fonts for this template-->
-  <link href=".../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <!-- Page level plugin CSS-->
-  <link href=".../vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
-  <!-- Custom styles for this template-->
-  <link href=".../css/sb-admin.css" rel="stylesheet">
   <!-- Bootstrap core CSS-->
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -41,12 +35,39 @@
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin.css" rel="stylesheet">
   <link href="css/sb-admin.css" rel="stylesheet">
+  <script type="text/javascript">
+      function validacion(){
+        mora = document.getElementById("mora").value;
+        maxPrestamos = document.getElementById("maxPrestamos").value;
+        totalPrestamos = document.getElementById("totalPrestamos").value;
+        estado = document.getElementById("estado").value;
+        idTiempo = document.getElementById("idTiempo").value;
+        if( mora > 0 ) {
+            alert('ERROR! Usuario posee mora');
+            return false;
+        }
+        else if(totalPrestamos >= maxPrestamos ){
+            alert('ERROR! Usuario no puede realizar más de '+maxPrestamos+' préstamos');
+            return false;
+        }
+        else if(estado=='PRESTADO'){
+            alert('ERROR! Este ejemplar no esta disponible');
+            return false;
+        }
+        else if(idTiempo==1){
+            alert('ERROR! Este ejemplar es de USO INTERNO');
+            return false;
+        }
+        
+        else return true;
+      }
+  </script>
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-      <a class="navbar-brand" href="#"><fmt:message key="label.Home"/> - <fmt:message key="label.titleAdmin"/></a>
+      <a class="navbar-brand" href="#"><fmt:message key="label.prestamos"/> - <fmt:message key="label.titleAdmin"/></a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -129,122 +150,90 @@
         <li class="breadcrumb-item">
           <a href="#">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active">My Dashboard</li>
+        <li class="breadcrumb-item active"><fmt:message key="label.titleP"/></li>
       </ol>
-      <!-- Icon Cards-->
-      <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-primary o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-users"></i>
-              </div>
-                <div class="mr-5">${Datos.cantidadUsuarios} <fmt:message key="label.uRegistro" /></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-warning o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-list"></i>
-              </div>
-              <div class="mr-5">${Datos.cantidadTotalItems} <fmt:message key="label.iTotal" /></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-success o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-check"></i>
-              </div>
-              <div class="mr-5">${Datos.cantidadDisponibleItems} <fmt:message key="label.iDisponible" /></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-                <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-danger o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-exclamation-triangle"></i>
-              </div>
-              <div class="mr-5">${Datos.cantidadPrestadoItems} <fmt:message key="label.iPrestado"/></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <!-- Area Chart Example-->
-      <div class="card mb-3">
-        <div class="card-header">
-          <i class="fa fa-area-chart"></i> Area Chart Example</div>
-        <div class="card-body">
-          <canvas id="myAreaChart" width="100%" height="30"></canvas>
-        </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-      </div>
-      <div class="row">
-        <div class="col-lg-8">
-          <!-- Example Bar Chart Card-->
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fa fa-bar-chart"></i> Bar Chart Example</div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-sm-8 my-auto">
-                  <canvas id="myBarChart" width="100" height="50"></canvas>
-                </div>
-                <div class="col-sm-4 text-center my-auto">
-                  <div class="h4 mb-0 text-primary">$34,693</div>
-                  <div class="small text-muted">YTD Revenue</div>
-                  <hr>
-                  <div class="h4 mb-0 text-warning">$18,474</div>
-                  <div class="small text-muted">YTD Expenses</div>
-                  <hr>
-                  <div class="h4 mb-0 text-success">$16,219</div>
-                  <div class="small text-muted">YTD Margin</div>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-          </div>
-          <!-- /Card Columns-->
-        </div>
-        <div class="col-lg-4">
-          <!-- Example Pie Chart Card-->
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fa fa-pie-chart"></i> Pie Chart Example</div>
-            <div class="card-body">
-              <canvas id="myPieChart" width="100%" height="100"></canvas>
-            </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-          </div>
-        </div>
-      </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-      </div>
     </div>
+      <c:if test="${not empty ErrorUser}">
+                <div class="form-group">
+                    <div class="alert alert-danger">
+                        <strong>ERROR! </strong><fmt:message key="label.errorUsuario"/>
+                    </div>
+                </div>
+     </c:if>
+      <div class="container-fluid">
+          <form method="post" action="ingresarP" onsubmit="return validacion()">
+              <div class="form-group">
+                  <center><h4>Información Usuario &nbsp;</h4></center>
+                <div class="breadcrumb">
+                    <div class="col-10">
+                        <table>
+                            <tr><td><h6><strong>ID Biblioteca</strong></td><td> ${Usuario.idUsuario}</h6></td></tr>
+                            <tr><td><h6><strong>Carnet</strong></td><td> ${Usuario.carnet}</h6></td></tr>
+                            <tr><td><h6><strong>Nombres</strong></td><td> ${Usuario.nombre}</h6></td></tr>
+                            <tr><td><h6><strong>Apellidos</strong></td><td> ${Usuario.apellido}</h6></td></tr>
+                            <tr><td><h6><strong>Categor&iacute;a</strong></td><td> ${Usuario.categoria}</h6></td></tr>
+                            <tr><td><h6><strong>Mora</strong></td><td> ${Usuario.mora}</h6></td></tr>
+                            <tr><td><h6><strong>Cantidad M&aacute;xima Pr&eacute;stamos</strong></td><td> ${Usuario.maxPrestamos}</h6></td></tr>
+                            <tr><td><h6><strong>Total pr&eacute;stamos</strong></td><td> ${Usuario.totalPrestamos}</h6></td></tr>
+                        </table>
+                        <c:if test="${Usuario.totalPrestamos >0}">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                            <th>ID Ejemplar</th>
+                            <th>T&iacute;tulo</th>
+                            <th>Fecha Pr&eacute;stamo</th>
+                            <th>Fecha Devoluci&oacute;n</th>
+                            </tr>
+                        </thead>
+                         <c:forEach items="${Usuario.prestamosUsuario}" var="objectList">
+                             <tr> 
+                            <c:forEach items="${objectList}" var="object">
+                              <td>${object}</td>
+                           </c:forEach>                            
+                             </tr>
+                          </c:forEach>
+                        </table>
+                        </div>
+                    </div>
+                    </c:if>
+                    </div>
+                    
+                </div>
+              </div>
+              <div class="form-group">
+                <center><h4>Información Ejemplar &nbsp;</h4></center>
+                <div class="breadcrumb">
+                    <div class="col-10">
+                        <table>
+                            <tr><td><h6><strong>ID Cat&aacute;logo</strong></td><td> ${Ejemplar.idCatalogo}</h6></td></tr>
+                            <tr><td><h6><strong>ID Ejemplar</strong></td><td> ${Ejemplar.idEjemplar}</h6></td></tr>
+                            <tr><td><h6><strong>Ubicaci&oacute;n</strong></td><td> ${Ejemplar.biblioteca}</h6></td></tr>
+                            <tr><td><h6><strong>T&iacute;tulo</strong></td><td> ${Ejemplar.titulo}</h6></td></tr>
+                            <tr><td><h6><strong>Estado</strong></td><td> ${Ejemplar.estado}</h6></td></tr>
+                            <tr><td><h6><strong>Material</strong></td><td> ${Ejemplar.material}</h6></td></tr>
+                            <tr><td><h6><strong>Tiempo Pr&eacute;stamo</strong></td><td> ${Ejemplar.tiempoPrestamo}</h6></td></tr>
+                            <tr><td><h6><strong>Cuota</strong></td><td> ${Ejemplar.cuota}</h6></td></tr>
+                        </table>
+                    </div>
+                </div>
+              </div>
+                        <!--Valores ocultos-->
+                        <input type="hidden" id="mora" value="${Usuario.mora}" />
+                        <input type="hidden" id="maxPrestamos" value="${Usuario.maxPrestamos}" />
+                        <input type="hidden" id="totalPrestamos" value="${Usuario.totalPrestamos}" />
+                        <input type="hidden" id="estado" value="${Ejemplar.estado}" /> 
+                        <input type="hidden" name="idUsuario" value="${Usuario.idUsuario}" />
+                        <input type="hidden" name="idCategoria" value="${Usuario.idCategoria}" />
+                        <input type="hidden" name="carnet" value="${Usuario.carnet}" />
+                        <input type="hidden" name="cuota" value="${Ejemplar.cuota}" />
+                        <input type="hidden" name="idEjemplar" value="${Ejemplar.idEjemplar}" />
+                        <input type="hidden" name="idTiempo" value="${Ejemplar.idTiempo}"/>
+                        <input class="btn btn-primary btn-block" type="submit" value="Ingresar Pr&eacute;stamo"></input>
+          </form>
+                        
     <!-- /.container-fluid-->
     <!-- /.content-wrapper-->
     <footer class="sticky-footer">
@@ -271,7 +260,7 @@
           <div class="modal-body"><fmt:message key="label.confirm"/></div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal"><fmt:message key="label.cancel"/></button>
-            <a class="btn btn-primary" href="logout"><fmt:message key="label.logout"/></a>
+            <a class="btn btn-primary" href="../logout"><fmt:message key="label.logout"/></a>
           </div>
         </div>
       </div>
@@ -301,6 +290,5 @@
     <script src="js/sb-admin-charts.min.js"></script>
   </div>
 </body>
-
 </html>
 <%}%>

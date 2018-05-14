@@ -11,8 +11,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sv.edu.cad.model.beans.CatalogoBean;
 import sv.edu.cad.model.beans.DatosBean;
 import sv.edu.cad.model.beans.UsuarioBean;
 
@@ -23,6 +27,10 @@ import sv.edu.cad.model.beans.UsuarioBean;
 public class Conexion {
     private Connection conexion = null;
     private Statement s = null;
+    ArrayList <String> fechaPrestamos;
+    ArrayList <Float> montoPrestamos;
+    ArrayList <Integer> idPrestamos;
+    
     //Constructor de la clase
     public void conectar() throws SQLException
     {
@@ -96,6 +104,244 @@ public class Conexion {
             return Datos;
         }
     }
+    
+    //Método para mostrar la información del usuario para realizar el ingreso del préstamo
+    public void cargarUsuario(UsuarioBean user){
+        try {
+            String Datos[]= new String[7];
+            String query ="SELECT usuario.idUsuario,categoriausuario.NombreCategoria"
+                    + ",usuario.Nombre,usuario.Apellido,categoriausuario.MaxPrestamos,usuario.Mora,usuario.idCategoria from usuario "
+                    + "inner join categoriausuario on categoriausuario.idCategoria=usuario.idCategoria "
+                    + "where usuario.Carnet='"+user.getCarnet()+"'";
+            ResultSet Contenido = s.executeQuery(query);
+            if(Contenido.next()){                
+                user.setIdUsuario(Contenido.getInt(1));
+                user.setCategoria(Contenido.getString(2));
+                user.setNombre(Contenido.getString(3));
+                user.setApellido(Contenido.getString(4));
+                user.setMaxPrestamos(Contenido.getInt(5));
+                user.setMora(Contenido.getFloat(6));
+                user.setIdCategoria(Contenido.getInt(7));
+                mostrarTotalPrestamos(user);
+                Contenido.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void mostrarTotalPrestamos(UsuarioBean user){
+        try {
+            String query="select count(prestamo.idUsuario) from prestamo "
+                    + "where prestamo.idUsuario="+ user.getIdUsuario()+ " and prestamo."
+                    + "EstadoPrestamo=\"PRESTADO\"";
+            ResultSet total = s.executeQuery(query);
+            if(total.next()){
+                int prestamos = total.getInt(1);
+                user.setTotalPrestamos(prestamos);
+            }      
+            total.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }      
+    }
+    
+    //Método para ver los préstamos en la tabla
+    public void muestraPrestamos(UsuarioBean user){
+        try
+        {
+            fechaPrestamos = new ArrayList<String>();
+            montoPrestamos = new ArrayList<Float>();
+            idPrestamos = new ArrayList <Integer>();
+            ArrayList<Object[]> prestamos = new ArrayList<Object[]>();
+            Object [][] data = null;
+            String query= "select prestamo.idEjemplar,catalogo.Titulo,"
+                    + "prestamo.FechaPrestamo,prestamo.FechaDevolucion,prestamo.montodia"
+                    + ",prestamo.idPrestamo from "
+                    + "prestamo inner join ejemplar on ejemplar.idEjemplar="
+                    + "prestamo.idEjemplar inner join catalogo on "
+                    + "catalogo.idCatalogo=ejemplar.idCatalogo where prestamo.idUsuario "
+                    + "= "+user.getIdUsuario()+" and prestamo.EstadoPrestamo=\"PRESTADO\"";
+            ResultSet catalogo = s.executeQuery(query);
+            while(catalogo.next())
+            {
+                Object[] row={catalogo.getInt(1),catalogo.getString(2),
+                catalogo.getString(3),catalogo.getString(4)};
+                prestamos.add(row);
+                fechaPrestamos.add(catalogo.getString(4));
+                montoPrestamos.add(catalogo.getFloat(5));
+                idPrestamos.add(catalogo.getInt(6));
+            }
+            user.setPrestamosUsuario(prestamos);
+            catalogo.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    //Método para calcular las moras 
+    // Como el arraylist anterior solo toma los prestamos que aun no han sido regresados
+    // comparará la fecha de devolución con la actual y si ya paso la fecha lo tomará como 
+    // prestamo vencido y actualizará la mora
+    public void calcularMora(UsuarioBean user){
+        ArrayList<Object[]> prestamosVencidos = new ArrayList<Object[]>();
+        LocalDate fechaActual = LocalDate.now();
+        float mora = 0;
+        for (int i = 0; i < fechaPrestamos.size(); i++) {
+            String [] arregloFecha = fechaPrestamos.get(i).split("-");
+            LocalDate fechaDevolucion = LocalDate.of(Integer.parseInt(arregloFecha[0]),
+                    Integer.parseInt(arregloFecha[1]),
+                    Integer.parseInt(arregloFecha[2]));
+            int dias = (int) ChronoUnit.DAYS.between(fechaDevolucion, fechaActual);
+            if(dias>0){
+                mora += dias*montoPrestamos.get(i);
+                prestamosVencidos.add(new Object[] {idPrestamos.get(i),dias,dias*montoPrestamos.get(i)});
+            }
+        }
+        
+        if(mora > 0)
+        {
+            try {
+                String query = "update usuario set usuario.mora = "+mora+" where "
+                        + "usuario.idUsuario = "+user.getIdUsuario();
+                s.executeUpdate(query);
+                //Se pasa el arraylist a una matriz multidimensional de tipo objeto
+                Object[][] arrayVencimiento = new Object[prestamosVencidos.size()][3];
+                for (int i = 0; i <prestamosVencidos.size(); i++) {
+                    Object[] row = prestamosVencidos.get(i);
+                    arrayVencimiento[i] = row;
+                }
+                
+                String queryMultiple;
+                for (int i = 0; i < arrayVencimiento.length; i++) {
+                    Conexion conexion2= new Conexion();
+                    query= "select mora.idprestamo from mora where mora.idprestamo = "
+                            + arrayVencimiento[i][0];
+                    conexion2.conectar();
+                    ResultSet resultado = conexion2.s.executeQuery(query);
+                    if(resultado.next()){
+                        queryMultiple="update mora set estadomora='PENDIENTE',"
+                                + "montomora="+arrayVencimiento[i][2]+",diasbajomora="
+                                + arrayVencimiento[i][1] + " where idprestamo = "
+                                + arrayVencimiento[i][0];
+                    }
+                    else{
+                        queryMultiple="insert into mora(idprestamo,estadomora,montomora,"
+                                + "diasbajomora) values("+arrayVencimiento[i][0]
+                                +",'PENDIENTE',"+arrayVencimiento[i][2]+","
+                                +arrayVencimiento[i][1]+")";
+                    }
+                    Conexion conexion3 = new Conexion();
+                    conexion3.conectar();
+                    conexion3.s.executeUpdate(queryMultiple);
+                    conexion3.cerrarConexion();
+                    resultado.close();
+                    conexion2.cerrarConexion();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    //Funcion para obtener la mora actualizada
+    public float obtenerMoraActualizada(int id)
+    {
+        try {
+            String query="select usuario.mora from usuario where usuario.idUsuario="+id;
+            ResultSet mora=s.executeQuery(query);
+            if(mora.next()){
+                return mora.getFloat(1);
+            }
+            else return 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
+    
+    //Método para mostrar la informacion del ejemplar seleccionado
+    public void mostrarEjemplar(CatalogoBean catalogo){
+        try {
+            String query ="select ejemplar.idEjemplar,biblioteca.Nombre,"
+                    + "estado.Estado,catalogo.idCatalogo,catalogo.Titulo,"
+                    + "material.NombreMaterial,tiempoprestamo.Tiempo,"
+                    + "ejemplar.idTiempo,cuotamora.cuotamora from "
+                    + "ejemplar inner join catalogo on ejemplar.idCatalogo="
+                    + "catalogo.idCatalogo inner join biblioteca on biblioteca."
+                    + "idBiblioteca=ejemplar.idBiblioteca inner join estado "
+                    + "on estado.idEstado=ejemplar.idEstado inner join material"
+                    + " on catalogo.idMaterial=material.idMaterial inner join "
+                    + "tiempoprestamo on tiempoprestamo.idTiempo=ejemplar."
+                    + "idTiempo inner join cuotamora on cuotamora.idcuota= "
+                    + "catalogo.idcuota where ejemplar.idEjemplar="+catalogo.getIdEjemplar()+"";
+            ResultSet Contenido = s.executeQuery(query);
+            if(Contenido.next()){                
+                catalogo.setIdEjemplar(Contenido.getInt(1));
+                catalogo.setBiblioteca(Contenido.getString(2));
+                catalogo.setEstado(Contenido.getString(3));
+                catalogo.setIdCatalogo(Contenido.getInt(4));
+                catalogo.setTitulo(Contenido.getString(5));
+                catalogo.setMaterial(Contenido.getString(6));
+                catalogo.setTiempoPrestamo(Contenido.getString(7));
+                catalogo.setIdTiempo(Contenido.getInt(8));
+                catalogo.setCuota(Contenido.getFloat(9));
+                Contenido.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private int devuelveTiempo(int idTiempo){
+        int dias = 0;
+        if(idTiempo==2)
+            dias=1;
+        else if(idTiempo==3)
+            dias=3;
+        else if(idTiempo==4)
+            dias=15;
+        return dias;
+    }
+    
+    //Método para el ingreso  de Prestamos
+    public void ingresoPrestamoEstudiante(CatalogoBean catalogo, UsuarioBean user){
+        try {
+                int dias = devuelveTiempo(catalogo.getIdTiempo());
+                LocalDate fechaPrestamo = LocalDate.now();
+                LocalDate fechaDevolucion = fechaPrestamo.plusDays(dias);//sumo días para la devolución
+                String query = "INSERT INTO `prestamo`(`idUsuario`, "
+                        + "`idEjemplar`, `FechaPrestamo`, `EstadoPrestamo`, `DuracionDias`"
+                        + ", `MontoDia`, `FechaDevolucion`) VALUES ("
+                        + user.getIdUsuario()+","+catalogo.getIdEjemplar()+",'"+fechaPrestamo.toString()
+                        +"','PRESTADO',"+dias+","+catalogo.getCuota()+",'"+fechaDevolucion.toString()+"')";
+                s.executeUpdate(query);
+                query  = "UPDATE ejemplar set ejemplar.idEstado = 2 where ejemplar.idEjemplar="
+                        +catalogo.getIdEjemplar();
+                s.executeUpdate(query);
+            } catch (SQLException ex) {
+                Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    
+    public void ingresoPrestamoDocenteAdmin(CatalogoBean catalogo, UsuarioBean user){
+        try {
+                int dias = 15;
+                LocalDate fechaPrestamo = LocalDate.now();
+                LocalDate fechaDevolucion = fechaPrestamo.plusDays(dias);//sumo días para la devolución
+                String query = "INSERT INTO `prestamo`(`idUsuario`, "
+                        + "`idEjemplar`, `FechaPrestamo`, `EstadoPrestamo`, `DuracionDias`"
+                        + ", `MontoDia`, `FechaDevolucion`) VALUES ("
+                        + user.getIdUsuario()+","+catalogo.getIdEjemplar()+",'"+fechaPrestamo.toString()
+                        +"','PRESTADO',"+dias+","+catalogo.getCuota()+",'"+fechaDevolucion.toString()+"')";
+                s.executeUpdate(query);
+                query  = "UPDATE ejemplar set ejemplar.idEstado = 2 where ejemplar.idEjemplar="
+                        +catalogo.getIdEjemplar();
+                s.executeUpdate(query);
+            } catch (SQLException ex) {
+                Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     
     //Funcion para cerrar la conexion
     public void cerrarConexion() throws SQLException

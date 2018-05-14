@@ -5,6 +5,8 @@
  */
 package sv.edu.cad.model.beans;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Susan
@@ -17,6 +19,46 @@ public class UsuarioBean {
     private String apellido;
     private float mora;
     private int idUsuario;
+    private String categoria;
+    private int maxPrestamos;
+    private int totalPrestamos;
+    private ArrayList<Object[]> prestamosUsuario;
+
+    public UsuarioBean(){
+        prestamosUsuario = new ArrayList<Object[]>();
+    }
+    
+    public ArrayList<Object[]> getPrestamosUsuario() {
+        return prestamosUsuario;
+    }
+
+    public void setPrestamosUsuario(ArrayList<Object[]> prestamosUsuario) {
+        this.prestamosUsuario = prestamosUsuario;
+    }
+    
+    public int getTotalPrestamos() {
+        return totalPrestamos;
+    }
+
+    public void setTotalPrestamos(int totalPrestamos) {
+        this.totalPrestamos = totalPrestamos;
+    }
+
+    public int getMaxPrestamos() {
+        return maxPrestamos;
+    }
+
+    public void setMaxPrestamos(int maxPrestamos) {
+        this.maxPrestamos = maxPrestamos;
+    }
+    
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 
     public int getIdUsuario() {
         return idUsuario;
@@ -31,7 +73,7 @@ public class UsuarioBean {
     }
 
     public void setCarnet(String carnet) {
-        this.carnet = carnet;
+        this.carnet = carnet.toUpperCase();
     }
 
     public String getPassword() {

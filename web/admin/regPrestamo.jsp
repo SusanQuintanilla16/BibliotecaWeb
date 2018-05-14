@@ -1,8 +1,9 @@
 <%-- 
-    Document   : homeAdmin
-    Created on : 30-abr-2018, 17:38:55
+    Document   : regPrestamo
+    Created on : 13-may-2018, 16:12:23
     Author     : Susan
 --%>
+
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" import="java.util.*,java.text.*"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
@@ -22,13 +23,6 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <title>.:: Amigos de Don Bosco - <fmt:message key="label.titleAdmin"/> ::.</title>
-   <link href=".../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom fonts for this template-->
-  <link href=".../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <!-- Page level plugin CSS-->
-  <link href=".../vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
-  <!-- Custom styles for this template-->
-  <link href=".../css/sb-admin.css" rel="stylesheet">
   <!-- Bootstrap core CSS-->
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -41,19 +35,38 @@
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin.css" rel="stylesheet">
   <link href="css/sb-admin.css" rel="stylesheet">
+      <script type="text/javascript">
+      function validacion(){
+        usuario = document.getElementById("carnet").value;
+        idE = document.getElementById("idEjemplar").value;
+        if( usuario == null || usuario.length == 0 || /^\s+$/.test(usuario) ) {
+            alert('Ingrese su usuario');
+            return false;
+        }
+        else if( idE == null || idE.length == 0 || /^\s+$/.test(idE) ) {
+            alert('Ingrese id del Ejemplar');
+            return false;
+        }
+        else if(isNaN(idE)){
+            alert('IDEjemplar debe ser número');
+            return false;
+        }
+        else return true;
+      }
+  </script>
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-      <a class="navbar-brand" href="#"><fmt:message key="label.Home"/> - <fmt:message key="label.titleAdmin"/></a>
+      <a class="navbar-brand" href="#"><fmt:message key="label.prestamos"/> - <fmt:message key="label.titleAdmin"/></a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Principal">
-          <a class="nav-link" href="http://localhost:8083/BibliotecaWeb/admin/homeAdmin.jsp">
+          <a class="nav-link" href="../admin/homeAdmin.jsp">
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text"><fmt:message key="label.main"/></span>
           </a>
@@ -129,122 +142,42 @@
         <li class="breadcrumb-item">
           <a href="#">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active">My Dashboard</li>
+        <li class="breadcrumb-item active"><fmt:message key="label.titleP"/></li>
       </ol>
-      <!-- Icon Cards-->
-      <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-primary o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-users"></i>
-              </div>
-                <div class="mr-5">${Datos.cantidadUsuarios} <fmt:message key="label.uRegistro" /></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-warning o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-list"></i>
-              </div>
-              <div class="mr-5">${Datos.cantidadTotalItems} <fmt:message key="label.iTotal" /></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-success o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-check"></i>
-              </div>
-              <div class="mr-5">${Datos.cantidadDisponibleItems} <fmt:message key="label.iDisponible" /></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-                <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-danger o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-exclamation-triangle"></i>
-              </div>
-              <div class="mr-5">${Datos.cantidadPrestadoItems} <fmt:message key="label.iPrestado"/></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="#">
-              <span class="float-left"><fmt:message key="label.actualizado"/> <i class="fa fa-angle-right"></i> <%= formattedDate%></span>
-              <span class="float-right">
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <!-- Area Chart Example-->
-      <div class="card mb-3">
-        <div class="card-header">
-          <i class="fa fa-area-chart"></i> Area Chart Example</div>
-        <div class="card-body">
-          <canvas id="myAreaChart" width="100%" height="30"></canvas>
-        </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-      </div>
-      <div class="row">
-        <div class="col-lg-8">
-          <!-- Example Bar Chart Card-->
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fa fa-bar-chart"></i> Bar Chart Example</div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-sm-8 my-auto">
-                  <canvas id="myBarChart" width="100" height="50"></canvas>
-                </div>
-                <div class="col-sm-4 text-center my-auto">
-                  <div class="h4 mb-0 text-primary">$34,693</div>
-                  <div class="small text-muted">YTD Revenue</div>
-                  <hr>
-                  <div class="h4 mb-0 text-warning">$18,474</div>
-                  <div class="small text-muted">YTD Expenses</div>
-                  <hr>
-                  <div class="h4 mb-0 text-success">$16,219</div>
-                  <div class="small text-muted">YTD Margin</div>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-          </div>
-          <!-- /Card Columns-->
-        </div>
-        <div class="col-lg-4">
-          <!-- Example Pie Chart Card-->
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fa fa-pie-chart"></i> Pie Chart Example</div>
-            <div class="card-body">
-              <canvas id="myPieChart" width="100%" height="100"></canvas>
-            </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-          </div>
-        </div>
-      </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-      </div>
     </div>
+      <c:if test="${not empty ErrorUser}">
+                <div class="form-group">
+                    <div class="alert alert-danger">
+                        <strong>ERROR! </strong><fmt:message key="label.errorUsuario"/>
+                    </div>
+                </div>
+     </c:if>
+      <c:if test="${not empty ErrorEjemplar}">
+                <div class="form-group">
+                    <div class="alert alert-danger">
+                        <strong>ERROR! </strong><fmt:message key="label.errorEjemplar"/>
+                    </div>
+                </div>
+     </c:if>
+      <div class="container-fluid">
+          <form method="post" action="../VerPrestamo" onsubmit="return validacion()">
+              <div class="form-group">
+                <div class="breadcrumb">
+                    <div class="col-md-5">
+                        <label for="idEjemplar">Ingrese ID de Ejemplar</label>
+                        <input class="form-control" id="idEjemplar" name="idEjemplar" type="text" aria-describedby="nameHelp" placeholder="ID de Ejemplar">
+                    </div>
+                    <div class="col-md-5">
+                        <label for="carnet">Ingrese Carnet de Usuario</label>
+                        <input class="form-control" id="carnet" name="carnet" type="text" aria-describedby="nameHelp" placeholder="Carnet de Usuario" >
+                    </div>
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <input class="btn btn-primary btn-block" type="submit" value="Ver">
+                    </div>
+                </div>
+              </div>    
+          </form>
     <!-- /.container-fluid-->
     <!-- /.content-wrapper-->
     <footer class="sticky-footer">
@@ -271,7 +204,7 @@
           <div class="modal-body"><fmt:message key="label.confirm"/></div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal"><fmt:message key="label.cancel"/></button>
-            <a class="btn btn-primary" href="logout"><fmt:message key="label.logout"/></a>
+            <a class="btn btn-primary" href="../logout"><fmt:message key="label.logout"/></a>
           </div>
         </div>
       </div>
