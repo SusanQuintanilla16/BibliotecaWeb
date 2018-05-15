@@ -19,6 +19,26 @@
         <servlet-name>IngPrestamoServlet</servlet-name>
         <servlet-class>sv.edu.cad.controller.admin.IngPrestamoServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>VerDevolucionServlet</servlet-name>
+        <servlet-class>sv.edu.cad.controller.admin.VerDevolucionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>IngDevolucionServlet</servlet-name>
+        <servlet-class>sv.edu.cad.controller.admin.IngDevolucionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>VerRenovarServlet</servlet-name>
+        <servlet-class>sv.edu.cad.controller.admin.VerRenovarServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>IngRenovarServlet</servlet-name>
+        <servlet-class>sv.edu.cad.controller.admin.IngRenovarServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CargarPrestamosServlet</servlet-name>
+        <servlet-class>sv.edu.cad.controller.admin.CargarPrestamosServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -34,6 +54,26 @@
     <servlet-mapping>
         <servlet-name>IngPrestamoServlet</servlet-name>
         <url-pattern>/ingresarP</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VerDevolucionServlet</servlet-name>
+        <url-pattern>/VerDevolucion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>IngDevolucionServlet</servlet-name>
+        <url-pattern>/ingresarD</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VerRenovarServlet</servlet-name>
+        <url-pattern>/VerRenovar</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>IngRenovarServlet</servlet-name>
+        <url-pattern>/ingresarR</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CargarPrestamosServlet</servlet-name>
+        <url-pattern>/cargarP</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

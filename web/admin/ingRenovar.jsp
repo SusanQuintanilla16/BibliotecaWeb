@@ -1,6 +1,6 @@
 <%-- 
-    Document   : ingPrestamo
-    Created on : 13-may-2018, 21:30:13
+    Document   : ingRenovar
+    Created on : 14-may-2018, 22:27:31
     Author     : Susan
 --%>
 
@@ -37,28 +37,18 @@
   <link href="css/sb-admin.css" rel="stylesheet">
   <script type="text/javascript">
       function validacion(){
-        mora = document.getElementById("mora").value;
-        maxPrestamos = document.getElementById("maxPrestamos").value;
-        totalPrestamos = document.getElementById("totalPrestamos").value;
-        estado = document.getElementById("estado").value;
-        idTiempo = document.getElementById("idTiempo").value;
-        if( mora > 0 ) {
-            alert('ERROR! Usuario posee mora');
-            return false;
+        var chks=document.getElementsByName('idValue[]');
+        var hasChecked=false;
+        for (var i = 0; i < chks.length; i++) {
+             if(chks[i].checked){
+                 hasChecked=true;
+                 break;
+             }
         }
-        else if(totalPrestamos >= maxPrestamos ){
-            alert('ERROR! Usuario no puede realizar más de '+maxPrestamos+' préstamos');
-            return false;
+        if(hasChecked==false){
+         alert('Seleccione al menos un préstamo');
+         return false;
         }
-        else if(estado=='PRESTADO'){
-            alert('ERROR! Este ejemplar no esta disponible');
-            return false;
-        }
-        else if(idTiempo==1){
-            alert('ERROR! Este ejemplar es de USO INTERNO');
-            return false;
-        }
-        
         else return true;
       }
   </script>
@@ -150,7 +140,7 @@
         <li class="breadcrumb-item">
           <a href="#">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active"><fmt:message key="label.titleP"/></li>
+        <li class="breadcrumb-item active"><fmt:message key="label.titleR"/></li>
       </ol>
     </div>
       <c:if test="${not empty ErrorUser}">
@@ -161,7 +151,7 @@
                 </div>
      </c:if>
       <div class="container-fluid">
-          <form method="post" action="http://localhost:8083/BibliotecaWeb/ingresarP" onsubmit="return validacion()">
+          <form method="post" action="http://localhost:8083/BibliotecaWeb/ingresarR" onsubmit="return validacion()">
               <div class="form-group">
                   <center><h4>Información Usuario &nbsp;</h4></center>
                 <div class="breadcrumb">
@@ -182,17 +172,21 @@
                         <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                             <tr>
+                            <th>Seleccionar</th>
                             <th>ID Ejemplar</th>
                             <th>T&iacute;tulo</th>
                             <th>Fecha Pr&eacute;stamo</th>
                             <th>Fecha Devoluci&oacute;n</th>
                             </tr>
                         </thead>
-                         <c:forEach items="${Usuario.prestamosUsuario}" var="objectList">
+                         <c:forEach items="${Ejemplar.arrayCatalogo}" var="object">
                              <tr> 
-                            <c:forEach items="${objectList}" var="object">
-                              <td>${object}</td>
-                           </c:forEach>                            
+                            
+                               <td><input type="checkbox" name="idValue[]" value="${object.idPrestamo}"></td>
+                                <td>${object.idEjemplar}</td>
+                                <td>${object.titulo}</td>
+                                <td>${object.fechaPrestamo}</td>
+                                <td>${object.fechaDevolucion}</td>                        
                              </tr>
                           </c:forEach>
                         </table>
@@ -203,35 +197,8 @@
                     
                 </div>
               </div>
-              <div class="form-group">
-                <center><h4>Información Ejemplar &nbsp;</h4></center>
-                <div class="breadcrumb">
-                    <div class="col-10">
-                        <table>
-                            <tr><td><h6><strong>ID Cat&aacute;logo</strong></td><td> ${Ejemplar.idCatalogo}</h6></td></tr>
-                            <tr><td><h6><strong>ID Ejemplar</strong></td><td> ${Ejemplar.idEjemplar}</h6></td></tr>
-                            <tr><td><h6><strong>Ubicaci&oacute;n</strong></td><td> ${Ejemplar.biblioteca}</h6></td></tr>
-                            <tr><td><h6><strong>T&iacute;tulo</strong></td><td> ${Ejemplar.titulo}</h6></td></tr>
-                            <tr><td><h6><strong>Estado</strong></td><td> ${Ejemplar.estado}</h6></td></tr>
-                            <tr><td><h6><strong>Material</strong></td><td> ${Ejemplar.material}</h6></td></tr>
-                            <tr><td><h6><strong>Tiempo Pr&eacute;stamo</strong></td><td> ${Ejemplar.tiempoPrestamo}</h6></td></tr>
-                            <tr><td><h6><strong>Cuota</strong></td><td> ${Ejemplar.cuota}</h6></td></tr>
-                        </table>
-                    </div>
-                </div>
-              </div>
-                        <!--Valores ocultos-->
-                        <input type="hidden" id="mora" value="${Usuario.mora}" />
-                        <input type="hidden" id="maxPrestamos" value="${Usuario.maxPrestamos}" />
-                        <input type="hidden" id="totalPrestamos" value="${Usuario.totalPrestamos}" />
-                        <input type="hidden" id="estado" value="${Ejemplar.estado}" /> 
-                        <input type="hidden" name="idUsuario" value="${Usuario.idUsuario}" />
-                        <input type="hidden" name="idCategoria" value="${Usuario.idCategoria}" />
-                        <input type="hidden" name="carnet" value="${Usuario.carnet}" />
-                        <input type="hidden" name="cuota" value="${Ejemplar.cuota}" />
-                        <input type="hidden" name="idEjemplar" value="${Ejemplar.idEjemplar}" />
-                        <input type="hidden" id="idTiempo" name="idTiempo" value="${Ejemplar.idTiempo}"/>
-                        <input class="btn btn-primary btn-block" type="submit" value="Ingresar Pr&eacute;stamo"></input>
+                <input type="hidden" name="carnet" value="${Usuario.carnet}" />
+            <input class="btn btn-primary btn-block" type="submit" value="Renovar"></input>
           </form>
                         
     <!-- /.container-fluid-->

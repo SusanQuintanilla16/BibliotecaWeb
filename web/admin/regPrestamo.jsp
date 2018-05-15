@@ -66,7 +66,7 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Principal">
-          <a class="nav-link" href="../admin/homeAdmin.jsp">
+          <a class="nav-link" href="http://localhost:8083/BibliotecaWeb/admin/homeAdmin.jsp">
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text"><fmt:message key="label.main"/></span>
           </a>
@@ -109,13 +109,13 @@
               <a href="http://localhost:8083/BibliotecaWeb/admin/regPrestamo.jsp"><fmt:message key="label.ingreso"/> <fmt:message key="label.prestamos"/></a>
             </li>
             <li>
-              <a href="#"><fmt:message key="label.renovar"/> <fmt:message key="label.prestamos"/></a>
+              <a href="http://localhost:8083/BibliotecaWeb/admin/regRenovar.jsp"><fmt:message key="label.renovar"/> <fmt:message key="label.prestamos"/></a>
             </li>
             <li>
-              <a href="#"><fmt:message key="label.devolver"/> <fmt:message key="label.prestamos"/></a>
+              <a href="http://localhost:8083/BibliotecaWeb/admin/regDevolucion.jsp"><fmt:message key="label.devolver"/> <fmt:message key="label.prestamos"/></a>
             </li>
             <li>
-              <a href="#"><fmt:message key="label.consultar"/> <fmt:message key="label.prestamos"/></a>
+              <a href="http://localhost:8083/BibliotecaWeb/cargarP"><fmt:message key="label.consultar"/> <fmt:message key="label.prestamos"/></a>
             </li>
           </ul>
         </li>
@@ -145,13 +145,6 @@
         <li class="breadcrumb-item active"><fmt:message key="label.titleP"/></li>
       </ol>
     </div>
-      <c:if test="${not empty ErrorUser}">
-                <div class="form-group">
-                    <div class="alert alert-danger">
-                        <strong>ERROR! </strong><fmt:message key="label.errorUsuario"/>
-                    </div>
-                </div>
-     </c:if>
       <c:if test="${not empty ErrorEjemplar}">
                 <div class="form-group">
                     <div class="alert alert-danger">
@@ -160,7 +153,7 @@
                 </div>
      </c:if>
       <div class="container-fluid">
-          <form method="post" action="../VerPrestamo" onsubmit="return validacion()">
+          <form method="post" action="http://localhost:8083/BibliotecaWeb/VerPrestamo" onsubmit="return validacion()">
               <div class="form-group">
                 <div class="breadcrumb">
                     <div class="col-md-5">
@@ -204,7 +197,7 @@
           <div class="modal-body"><fmt:message key="label.confirm"/></div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal"><fmt:message key="label.cancel"/></button>
-            <a class="btn btn-primary" href="../logout"><fmt:message key="label.logout"/></a>
+            <a class="btn btn-primary" href="http://localhost:8083/BibliotecaWeb/logout"><fmt:message key="label.logout"/></a>
           </div>
         </div>
       </div>

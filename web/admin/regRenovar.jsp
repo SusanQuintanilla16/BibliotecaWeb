@@ -1,8 +1,9 @@
 <%-- 
-    Document   : ingPrestamo
-    Created on : 13-may-2018, 21:30:13
+    Document   : regRenovar
+    Created on : 14-may-2018, 22:27:55
     Author     : Susan
 --%>
+
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" import="java.util.*,java.text.*"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -35,30 +36,22 @@
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin.css" rel="stylesheet">
   <link href="css/sb-admin.css" rel="stylesheet">
-  <script type="text/javascript">
+      <script type="text/javascript">
       function validacion(){
-        mora = document.getElementById("mora").value;
-        maxPrestamos = document.getElementById("maxPrestamos").value;
-        totalPrestamos = document.getElementById("totalPrestamos").value;
-        estado = document.getElementById("estado").value;
-        idTiempo = document.getElementById("idTiempo").value;
-        if( mora > 0 ) {
-            alert('ERROR! Usuario posee mora');
+        usuario = document.getElementById("carnet").value;
+        //idE = document.getElementById("idEjemplar").value;
+        if( usuario == null || usuario.length == 0 || /^\s+$/.test(usuario) ) {
+            alert('Ingrese su usuario');
             return false;
         }
-        else if(totalPrestamos >= maxPrestamos ){
-            alert('ERROR! Usuario no puede realizar más de '+maxPrestamos+' préstamos');
+        /*else if( idE == null || idE.length == 0 || /^\s+$/.test(idE) ) {
+            alert('Ingrese id del Ejemplar');
             return false;
         }
-        else if(estado=='PRESTADO'){
-            alert('ERROR! Este ejemplar no esta disponible');
+        else if(isNaN(idE)){
+            alert('IDEjemplar debe ser número');
             return false;
-        }
-        else if(idTiempo==1){
-            alert('ERROR! Este ejemplar es de USO INTERNO');
-            return false;
-        }
-        
+        }*/
         else return true;
       }
   </script>
@@ -150,10 +143,10 @@
         <li class="breadcrumb-item">
           <a href="#">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active"><fmt:message key="label.titleP"/></li>
+        <li class="breadcrumb-item active"><fmt:message key="label.titleR"/></li>
       </ol>
     </div>
-      <c:if test="${not empty ErrorUser}">
+      <c:if test="${not empty ErrorEjemplar}">
                 <div class="form-group">
                     <div class="alert alert-danger">
                         <strong>ERROR! </strong><fmt:message key="label.errorUsuario"/>
@@ -161,79 +154,20 @@
                 </div>
      </c:if>
       <div class="container-fluid">
-          <form method="post" action="http://localhost:8083/BibliotecaWeb/ingresarP" onsubmit="return validacion()">
+          <form method="post" action="http://localhost:8083/BibliotecaWeb/VerRenovar" onsubmit="return validacion()">
               <div class="form-group">
-                  <center><h4>Información Usuario &nbsp;</h4></center>
                 <div class="breadcrumb">
-                    <div class="col-10">
-                        <table>
-                            <tr><td><h6><strong>ID Biblioteca</strong></td><td> ${Usuario.idUsuario}</h6></td></tr>
-                            <tr><td><h6><strong>Carnet</strong></td><td> ${Usuario.carnet}</h6></td></tr>
-                            <tr><td><h6><strong>Nombres</strong></td><td> ${Usuario.nombre}</h6></td></tr>
-                            <tr><td><h6><strong>Apellidos</strong></td><td> ${Usuario.apellido}</h6></td></tr>
-                            <tr><td><h6><strong>Categor&iacute;a</strong></td><td> ${Usuario.categoria}</h6></td></tr>
-                            <tr><td><h6><strong>Mora</strong></td><td> ${Usuario.mora}</h6></td></tr>
-                            <tr><td><h6><strong>Cantidad M&aacute;xima Pr&eacute;stamos</strong></td><td> ${Usuario.maxPrestamos}</h6></td></tr>
-                            <tr><td><h6><strong>Total pr&eacute;stamos</strong></td><td> ${Usuario.totalPrestamos}</h6></td></tr>
-                        </table>
-                        <c:if test="${Usuario.totalPrestamos >0}">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                            <th>ID Ejemplar</th>
-                            <th>T&iacute;tulo</th>
-                            <th>Fecha Pr&eacute;stamo</th>
-                            <th>Fecha Devoluci&oacute;n</th>
-                            </tr>
-                        </thead>
-                         <c:forEach items="${Usuario.prestamosUsuario}" var="objectList">
-                             <tr> 
-                            <c:forEach items="${objectList}" var="object">
-                              <td>${object}</td>
-                           </c:forEach>                            
-                             </tr>
-                          </c:forEach>
-                        </table>
-                        </div>
+                    <div class="col-md-7">
+                        <label for="carnet">Ingrese Carnet de Usuario</label>
+                        <input class="form-control" id="carnet" name="carnet" type="text" aria-describedby="nameHelp" placeholder="Carnet de Usuario" >
                     </div>
-                    </c:if>
-                    </div>
-                    
-                </div>
-              </div>
-              <div class="form-group">
-                <center><h4>Información Ejemplar &nbsp;</h4></center>
-                <div class="breadcrumb">
-                    <div class="col-10">
-                        <table>
-                            <tr><td><h6><strong>ID Cat&aacute;logo</strong></td><td> ${Ejemplar.idCatalogo}</h6></td></tr>
-                            <tr><td><h6><strong>ID Ejemplar</strong></td><td> ${Ejemplar.idEjemplar}</h6></td></tr>
-                            <tr><td><h6><strong>Ubicaci&oacute;n</strong></td><td> ${Ejemplar.biblioteca}</h6></td></tr>
-                            <tr><td><h6><strong>T&iacute;tulo</strong></td><td> ${Ejemplar.titulo}</h6></td></tr>
-                            <tr><td><h6><strong>Estado</strong></td><td> ${Ejemplar.estado}</h6></td></tr>
-                            <tr><td><h6><strong>Material</strong></td><td> ${Ejemplar.material}</h6></td></tr>
-                            <tr><td><h6><strong>Tiempo Pr&eacute;stamo</strong></td><td> ${Ejemplar.tiempoPrestamo}</h6></td></tr>
-                            <tr><td><h6><strong>Cuota</strong></td><td> ${Ejemplar.cuota}</h6></td></tr>
-                        </table>
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <input class="btn btn-primary btn-block" type="submit" value="Ver">
                     </div>
                 </div>
-              </div>
-                        <!--Valores ocultos-->
-                        <input type="hidden" id="mora" value="${Usuario.mora}" />
-                        <input type="hidden" id="maxPrestamos" value="${Usuario.maxPrestamos}" />
-                        <input type="hidden" id="totalPrestamos" value="${Usuario.totalPrestamos}" />
-                        <input type="hidden" id="estado" value="${Ejemplar.estado}" /> 
-                        <input type="hidden" name="idUsuario" value="${Usuario.idUsuario}" />
-                        <input type="hidden" name="idCategoria" value="${Usuario.idCategoria}" />
-                        <input type="hidden" name="carnet" value="${Usuario.carnet}" />
-                        <input type="hidden" name="cuota" value="${Ejemplar.cuota}" />
-                        <input type="hidden" name="idEjemplar" value="${Ejemplar.idEjemplar}" />
-                        <input type="hidden" id="idTiempo" name="idTiempo" value="${Ejemplar.idTiempo}"/>
-                        <input class="btn btn-primary btn-block" type="submit" value="Ingresar Pr&eacute;stamo"></input>
+              </div>    
           </form>
-                        
     <!-- /.container-fluid-->
     <!-- /.content-wrapper-->
     <footer class="sticky-footer">
@@ -290,5 +224,6 @@
     <script src="js/sb-admin-charts.min.js"></script>
   </div>
 </body>
+
 </html>
 <%}%>

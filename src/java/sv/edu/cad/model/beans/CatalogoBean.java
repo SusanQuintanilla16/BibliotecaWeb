@@ -5,6 +5,8 @@
  */
 package sv.edu.cad.model.beans;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Susan
@@ -19,6 +21,54 @@ public class CatalogoBean {
     String tiempoPrestamo;
     float cuota;
     int idTiempo;
+    ArrayList<CatalogoBean> arrayCatalogo; 
+    
+        //Variables para prestamo
+    String carnetPrestamo;
+    String fechaDevolucion;
+    String fechaPrestamo;
+    int idPrestamo;
+
+
+    public ArrayList<CatalogoBean> getArrayCatalogo() {
+        return arrayCatalogo;
+    }
+
+    public void setArrayCatalogo(ArrayList<CatalogoBean> arrayCatalogo) {
+        this.arrayCatalogo = arrayCatalogo;
+    }
+    
+    public String getCarnetPrestamo() {
+        return carnetPrestamo;
+    }
+
+    public void setCarnetPrestamo(String carnetPrestamo) {
+        this.carnetPrestamo = carnetPrestamo;
+    }
+
+    public String getFechaDevolucion() {
+        return fechaDevolucion;
+    }
+
+    public void setFechaDevolucion(String fechaDevolucion) {
+        this.fechaDevolucion = fechaDevolucion;
+    }
+
+    public String getFechaPrestamo() {
+        return fechaPrestamo;
+    }
+
+    public void setFechaPrestamo(String fechaPrestamo) {
+        this.fechaPrestamo = fechaPrestamo;
+    }
+
+    public int getIdPrestamo() {
+        return idPrestamo;
+    }
+
+    public void setIdPrestamo(int idPrestamo) {
+        this.idPrestamo = idPrestamo;
+    }
 
     public int getIdTiempo() {
         return idTiempo;

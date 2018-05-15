@@ -96,13 +96,13 @@
               <a href="http://localhost:8083/BibliotecaWeb/admin/regPrestamo.jsp"><fmt:message key="label.ingreso"/> <fmt:message key="label.prestamos"/></a>
             </li>
             <li>
-              <a href="#"><fmt:message key="label.renovar"/> <fmt:message key="label.prestamos"/></a>
+              <a href="http://localhost:8083/BibliotecaWeb/admin/regRenovar.jsp"><fmt:message key="label.renovar"/> <fmt:message key="label.prestamos"/></a>
             </li>
             <li>
-              <a href="#"><fmt:message key="label.devolver"/> <fmt:message key="label.prestamos"/></a>
+              <a href="http://localhost:8083/BibliotecaWeb/admin/regDevolucion.jsp"><fmt:message key="label.devolver"/> <fmt:message key="label.prestamos"/></a>
             </li>
             <li>
-              <a href="#"><fmt:message key="label.consultar"/> <fmt:message key="label.prestamos"/></a>
+              <a href="http://localhost:8083/BibliotecaWeb/cargarP"><fmt:message key="label.consultar"/> <fmt:message key="label.prestamos"/></a>
             </li>
           </ul>
         </li>
@@ -271,7 +271,7 @@
           <div class="modal-body"><fmt:message key="label.confirm"/></div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal"><fmt:message key="label.cancel"/></button>
-            <a class="btn btn-primary" href="logout"><fmt:message key="label.logout"/></a>
+            <a class="btn btn-primary" href="http://localhost:8083/BibliotecaWeb/logout"><fmt:message key="label.logout"/></a>
           </div>
         </div>
       </div>

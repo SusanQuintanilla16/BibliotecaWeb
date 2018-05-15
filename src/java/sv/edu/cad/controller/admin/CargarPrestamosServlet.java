@@ -8,23 +8,22 @@ package sv.edu.cad.controller.admin;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import sv.edu.cad.dao.Conexion;
-import sv.edu.cad.model.beans.CatalogoBean;
-import sv.edu.cad.model.beans.DatosBean;
-import sv.edu.cad.model.beans.UsuarioBean;
 
 /**
  *
  * @author Susan
  */
-public class IngPrestamoServlet extends HttpServlet {
+public class CargarPrestamosServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,42 +35,20 @@ public class IngPrestamoServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException {
-        Conexion conexion = new Conexion();
-        UsuarioBean user = new UsuarioBean();
-        CatalogoBean ejemplar = new CatalogoBean();
+            throws ServletException, IOException {
         try {
-            
-            user.setIdUsuario(Integer.parseInt(request.getParameter("idUsuario")));
-            user.setIdCategoria(Integer.parseInt(request.getParameter("idCategoria")));
-            user.setCarnet(request.getParameter("carnet"));
-            ejemplar.setCuota(Float.parseFloat(request.getParameter("cuota")));
-            ejemplar.setIdEjemplar(Integer.parseInt(request.getParameter("idEjemplar")));
-            ejemplar.setIdTiempo(Integer.parseInt(request.getParameter("idTiempo")));
-            
+            ArrayList<String[]> prestamos = new ArrayList<String[]>();
+            Conexion conexion = new Conexion();
             conexion.conectar();
-            if(user.getIdCategoria() == 3){
-                conexion.ingresoPrestamoEstudiante(ejemplar, user);
-            }else{
-                conexion.ingresoPrestamoDocenteAdmin(ejemplar, user);
-            }
-            
-            //Actualizando registros
-            HttpSession session = request.getSession();
-            DatosBean Datos = conexion.cargaInfoHomeA();
-            session.setAttribute("Datos", Datos);
-            
-            
-            //Redirigiendo a servlet
-            request.setAttribute("carnet",user.getCarnet());
-            request.setAttribute("idEjemplar", ejemplar.getIdEjemplar());
-            request.getRequestDispatcher("VerPrestamo").forward(request, response); 
-            
+            prestamos = conexion.verPrestamos();
+            ServletContext sc = getServletContext();
+            request.setAttribute("Registros", prestamos);
+            RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/verPrestamos.jsp");
+            requestDispatcher.forward(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(IngPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            conexion.cerrarConexion();
+            Logger.getLogger(CargarPrestamosServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -86,11 +63,7 @@ public class IngPrestamoServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(IngPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -104,11 +77,7 @@ public class IngPrestamoServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(IngPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**

@@ -1,6 +1,6 @@
 <%-- 
-    Document   : ingPrestamo
-    Created on : 13-may-2018, 21:30:13
+    Document   : ingDevolucion
+    Created on : 14-may-2018, 12:41:31
     Author     : Susan
 --%>
 
@@ -37,28 +37,22 @@
   <link href="css/sb-admin.css" rel="stylesheet">
   <script type="text/javascript">
       function validacion(){
-        mora = document.getElementById("mora").value;
-        maxPrestamos = document.getElementById("maxPrestamos").value;
-        totalPrestamos = document.getElementById("totalPrestamos").value;
+        descripcion = document.getElementById("comment").value;
+        carnetUsuario = document.getElementById("carnetUsuario").value;
         estado = document.getElementById("estado").value;
-        idTiempo = document.getElementById("idTiempo").value;
-        if( mora > 0 ) {
-            alert('ERROR! Usuario posee mora');
+        if( descripcion == null || descripcion.length == 0 || /^\s+$/.test(descripcion) ) {
+            alert('Faltan las observaciones del préstamo');
             return false;
         }
-        else if(totalPrestamos >= maxPrestamos ){
-            alert('ERROR! Usuario no puede realizar más de '+maxPrestamos+' préstamos');
+        else if(estado != 'PRESTADO'){
+            alert('El ejemplar ya fue devuelto');
             return false;
         }
-        else if(estado=='PRESTADO'){
-            alert('ERROR! Este ejemplar no esta disponible');
+        carnetPrestamo = document.getElementById("carnetPrestamo").value;
+        if(carnetPrestamo != carnetPrestamo){
+            alert('ERROR! Solo el usuario que hizo el préstamo puede devolverlo ');
             return false;
-        }
-        else if(idTiempo==1){
-            alert('ERROR! Este ejemplar es de USO INTERNO');
-            return false;
-        }
-        
+        }  
         else return true;
       }
   </script>
@@ -150,7 +144,7 @@
         <li class="breadcrumb-item">
           <a href="#">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active"><fmt:message key="label.titleP"/></li>
+        <li class="breadcrumb-item active"><fmt:message key="label.titleD"/></li>
       </ol>
     </div>
       <c:if test="${not empty ErrorUser}">
@@ -161,7 +155,7 @@
                 </div>
      </c:if>
       <div class="container-fluid">
-          <form method="post" action="http://localhost:8083/BibliotecaWeb/ingresarP" onsubmit="return validacion()">
+          <form method="post" action="http://localhost:8083/BibliotecaWeb/ingresarD" onsubmit="return validacion()">
               <div class="form-group">
                   <center><h4>Información Usuario &nbsp;</h4></center>
                 <div class="breadcrumb">
@@ -216,22 +210,29 @@
                             <tr><td><h6><strong>Material</strong></td><td> ${Ejemplar.material}</h6></td></tr>
                             <tr><td><h6><strong>Tiempo Pr&eacute;stamo</strong></td><td> ${Ejemplar.tiempoPrestamo}</h6></td></tr>
                             <tr><td><h6><strong>Cuota</strong></td><td> ${Ejemplar.cuota}</h6></td></tr>
+                            <c:if test="${Ejemplar.estado == 'PRESTADO'}">
+                                <tr><td><h6><strong>Fecha de Pr&eacute;stamo </strong></td><td> ${Ejemplar.fechaPrestamo}</h6></td></tr>
+                                <tr><td><h6><strong>Fecha de Devoluci&oacute;n </strong></td><td> ${Ejemplar.fechaDevolucion}</h6></td></tr>
+                                <tr><td><h6><strong>Prestado por </strong></td><td> ${Ejemplar.carnetPrestamo}</h6></td></tr>
+                            </c:if>
                         </table>
                     </div>
                 </div>
               </div>
+                            <div class="form-group">
+                                <center><h4>Devolver Ejemplar &nbsp;</h4></center>
+                                    <div class="breadcrumb">
+                                        <label for="comment"><strong>Observaciones</strong></label>
+                                <textarea class="form-control" rows="3" id="comment" name="descripcion"></textarea>
+                            </div>
+                            </div>
                         <!--Valores ocultos-->
-                        <input type="hidden" id="mora" value="${Usuario.mora}" />
-                        <input type="hidden" id="maxPrestamos" value="${Usuario.maxPrestamos}" />
-                        <input type="hidden" id="totalPrestamos" value="${Usuario.totalPrestamos}" />
                         <input type="hidden" id="estado" value="${Ejemplar.estado}" /> 
-                        <input type="hidden" name="idUsuario" value="${Usuario.idUsuario}" />
-                        <input type="hidden" name="idCategoria" value="${Usuario.idCategoria}" />
-                        <input type="hidden" name="carnet" value="${Usuario.carnet}" />
-                        <input type="hidden" name="cuota" value="${Ejemplar.cuota}" />
+                        <input type="hidden" id="carnetUsuario" name="carnetUsuario" value="${Usuario.carnet}" />
+                        <input type="hidden" id="carnetPrestamo" name="carnetPrestamo" value="${Ejemplar.carnetPrestamo}" />
                         <input type="hidden" name="idEjemplar" value="${Ejemplar.idEjemplar}" />
-                        <input type="hidden" id="idTiempo" name="idTiempo" value="${Ejemplar.idTiempo}"/>
-                        <input class="btn btn-primary btn-block" type="submit" value="Ingresar Pr&eacute;stamo"></input>
+                        <input type="hidden" name="idPrestamo" value="${Ejemplar.idPrestamo}" />
+                        <input class="btn btn-primary btn-block" type="submit" value="Devolver Pr&eacute;stamo"></input>
           </form>
                         
     <!-- /.container-fluid-->

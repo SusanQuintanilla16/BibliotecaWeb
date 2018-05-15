@@ -16,16 +16,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import sv.edu.cad.dao.Conexion;
 import sv.edu.cad.model.beans.CatalogoBean;
 import sv.edu.cad.model.beans.UsuarioBean;
+import sv.edu.cad.dao.Conexion;
 
 /**
  *
  * @author Susan
  */
-public class VerPrestamoServlet extends HttpServlet {
+public class VerDevolucionServlet extends HttpServlet {
 
+    String carnet;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -39,9 +40,12 @@ public class VerPrestamoServlet extends HttpServlet {
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         Conexion conexion = new Conexion();
-        try {
-           String carnet = request.getParameter("carnet");
+        try{
+           
            int idEjemplar = Integer.parseInt(request.getParameter("idEjemplar"));
+           if(request.getParameter("carnet")!=null){
+               this.carnet=request.getParameter("carnet");
+           }
            
            //Instancias hacia las clases
            CatalogoBean ejemplar = new CatalogoBean();
@@ -60,24 +64,27 @@ public class VerPrestamoServlet extends HttpServlet {
            }
            
            conexion.mostrarEjemplar(ejemplar);
-           conexion.cerrarConexion();
            
            if(ejemplar.getIdCatalogo()==0||user.getIdUsuario()==0){
                String error="Ocurrio un error";
                 request.setAttribute("ErrorEjemplar", error );
                 ServletContext sc = getServletContext();
-                RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/regPrestamo.jsp");
+                RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/regDevolucion.jsp");
                 requestDispatcher.forward(request, response);
            }else{
+               if(ejemplar.getEstado().equals("PRESTADO")){
+               conexion.mostrarItemPrestamo(ejemplar);
+                }
+               conexion.cerrarConexion();
                  request.setAttribute("Usuario", user);
                  request.setAttribute("Ejemplar", ejemplar);
                  ServletContext sc = getServletContext();
-                 RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/ingPrestamo.jsp");
+                 RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/ingDevolucion.jsp");
                  requestDispatcher.forward(request, response);
            }
             
         } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VerDevolucionServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -96,7 +103,7 @@ public class VerPrestamoServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VerDevolucionServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -114,7 +121,7 @@ public class VerPrestamoServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VerDevolucionServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

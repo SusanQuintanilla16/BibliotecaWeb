@@ -24,7 +24,7 @@ import sv.edu.cad.model.beans.UsuarioBean;
  *
  * @author Susan
  */
-public class VerPrestamoServlet extends HttpServlet {
+public class VerRenovarServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,19 +36,17 @@ public class VerPrestamoServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         Conexion conexion = new Conexion();
         try {
            String carnet = request.getParameter("carnet");
-           int idEjemplar = Integer.parseInt(request.getParameter("idEjemplar"));
            
            //Instancias hacia las clases
-           CatalogoBean ejemplar = new CatalogoBean();
            UsuarioBean user = new UsuarioBean();
+           CatalogoBean ejemplar = new CatalogoBean();
            
            user.setCarnet(carnet);
-           ejemplar.setIdEjemplar(idEjemplar);
            
            conexion.conectar();
            conexion.cargarUsuario(user);
@@ -57,22 +55,22 @@ public class VerPrestamoServlet extends HttpServlet {
                conexion.muestraPrestamos(user);
                conexion.calcularMora(user);
                user.setMora(conexion.obtenerMoraActualizada(user.getIdUsuario()));
+               conexion.muestraPrestamosArrayCatalogo(user, ejemplar);
            }
            
-           conexion.mostrarEjemplar(ejemplar);
            conexion.cerrarConexion();
            
-           if(ejemplar.getIdCatalogo()==0||user.getIdUsuario()==0){
+           if(user.getIdUsuario()==0){
                String error="Ocurrio un error";
                 request.setAttribute("ErrorEjemplar", error );
                 ServletContext sc = getServletContext();
-                RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/regPrestamo.jsp");
+                RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/regRenovar.jsp");
                 requestDispatcher.forward(request, response);
            }else{
                  request.setAttribute("Usuario", user);
                  request.setAttribute("Ejemplar", ejemplar);
                  ServletContext sc = getServletContext();
-                 RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/ingPrestamo.jsp");
+                 RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/ingRenovar.jsp");
                  requestDispatcher.forward(request, response);
            }
             
@@ -93,11 +91,7 @@ public class VerPrestamoServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -111,11 +105,7 @@ public class VerPrestamoServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**

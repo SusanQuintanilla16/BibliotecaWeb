@@ -10,21 +10,20 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import sv.edu.cad.dao.Conexion;
-import sv.edu.cad.model.beans.CatalogoBean;
+import sv.edu.cad.model.beans.DatosBean;
 import sv.edu.cad.model.beans.UsuarioBean;
 
 /**
  *
  * @author Susan
  */
-public class VerPrestamoServlet extends HttpServlet {
+public class IngDevolucionServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,47 +36,34 @@ public class VerPrestamoServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        response.setContentType("text/html;charset=UTF-8");
         Conexion conexion = new Conexion();
+        UsuarioBean user = new UsuarioBean();
         try {
-           String carnet = request.getParameter("carnet");
-           int idEjemplar = Integer.parseInt(request.getParameter("idEjemplar"));
-           
-           //Instancias hacia las clases
-           CatalogoBean ejemplar = new CatalogoBean();
-           UsuarioBean user = new UsuarioBean();
-           
-           user.setCarnet(carnet);
-           ejemplar.setIdEjemplar(idEjemplar);
-           
-           conexion.conectar();
-           conexion.cargarUsuario(user);
+            user.setCarnet(request.getParameter("carnetUsuario"));
+            String descripcion = request.getParameter("descripcion");
+            int idPrestamo = Integer.parseInt(request.getParameter("idPrestamo"));
+            int idEjemplar = Integer.parseInt(request.getParameter("idEjemplar"));
+            
+            conexion.conectar();
+            conexion.ingresoDevolucion(descripcion, idPrestamo, idEjemplar);
+            
+            request.setAttribute("idEjemplar", idEjemplar);
+            request.setAttribute("carnet",user.getCarnet());
+            //Actualizando registros
+            HttpSession session = request.getSession();
+            DatosBean Datos = conexion.cargaInfoHomeA();
+            session.setAttribute("Datos", Datos);
+            conexion.cerrarConexion();
+            //Redirigiendo a servlet 
 
-           if(user.getTotalPrestamos()>0){
-               conexion.muestraPrestamos(user);
-               conexion.calcularMora(user);
-               user.setMora(conexion.obtenerMoraActualizada(user.getIdUsuario()));
-           }
-           
-           conexion.mostrarEjemplar(ejemplar);
-           conexion.cerrarConexion();
-           
-           if(ejemplar.getIdCatalogo()==0||user.getIdUsuario()==0){
-               String error="Ocurrio un error";
-                request.setAttribute("ErrorEjemplar", error );
-                ServletContext sc = getServletContext();
-                RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/regPrestamo.jsp");
-                requestDispatcher.forward(request, response);
-           }else{
-                 request.setAttribute("Usuario", user);
-                 request.setAttribute("Ejemplar", ejemplar);
-                 ServletContext sc = getServletContext();
-                 RequestDispatcher requestDispatcher = sc.getRequestDispatcher("/admin/ingPrestamo.jsp");
-                 requestDispatcher.forward(request, response);
-           }
+            request.getRequestDispatcher("VerDevolucion").forward(request, response); 
+            
             
         } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IngDevolucionServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally{
+            
         }
     }
 
@@ -96,7 +82,7 @@ public class VerPrestamoServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IngDevolucionServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -114,7 +100,7 @@ public class VerPrestamoServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(VerPrestamoServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IngDevolucionServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
